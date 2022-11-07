@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface ItemService {
     List<Item> findAllItems();
-    void save(List<Item> items);
-    void consume(ItemDto itemDto);
-    void consume(List<ItemDto> itemDtos);
+    void save(List<ItemDto> itemDtos);
+    void save(ItemDto itemDto);
 }

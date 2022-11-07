@@ -1,11 +1,10 @@
 package ru.home.application.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.home.application.dto.ItemDto;
 import ru.home.application.exceptions.ObjectNotFound;
+import ru.home.application.mappers.ItemMapper;
 import ru.home.application.models.Item;
 import ru.home.application.repositories.ItemRepository;
 
@@ -16,19 +15,15 @@ import java.util.List;
 @Transactional
 public class ItemServiceImpl implements ItemService {
 
-//    private final KafkaTemplate<Integer, ItemDto> kafkaItemTemplate;
-    private final ObjectMapper objectMapper;
     private final ItemRepository itemRepository;
+    private final ItemMapper itemMapper;
 
     @Autowired
     public ItemServiceImpl(
-//            KafkaTemplate<Integer, ItemDto> kafkaItemTemplate,
-            ObjectMapper objectMapper,
-            ItemRepository itemRepository
-    ) {
-//        this.kafkaItemTemplate = kafkaItemTemplate;
-        this.objectMapper = objectMapper;
+            ItemRepository itemRepository,
+            ItemMapper itemMapper) {
         this.itemRepository = itemRepository;
+        this.itemMapper = itemMapper;
     }
 
     @Override
@@ -41,18 +36,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void save(List<Item> items) {
+    public void save(ItemDto itemDto) {
+        Item item = itemMapper.toItem(itemDto);
+        this.itemRepository.save(item);
+    }
+
+    @Override
+    public void save(List<ItemDto> itemDtos) {
+        List<Item> items = itemMapper.toItems(itemDtos);
         this.itemRepository.saveAll(items);
     }
-
-    @Override
-    public void consume(ItemDto itemDto) {
-
-    }
-
-    @Override
-    public void consume(List<ItemDto> itemDtos) {
-
-    }
-
 }
